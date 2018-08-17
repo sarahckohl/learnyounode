@@ -1,23 +1,19 @@
-const http = require('http'),
-      bl = require('bl');
+const socket= process.argv[2];
 
-var queue = [];
-var count = 0;
-http.get(process.argv[2],aux(0));
-http.get(process.argv[3],aux(1));
-http.get(process.argv[4],aux(2));
+const net = require('net');
 
+function padDigits(number)
+{
+    return number < 10 ? "0"+number : String(number); 
+}
 
-function aux (i){
-    return function callback(response){
-                response.pipe(bl(function (err, data) { 
-                    queue[i] = data.toString();
-                    count++;
-                    if(count == 3){
-                         queue.forEach(function(pos){
-                            console.log(pos);
-                         });
-                    }
-                }));
-            };
-};
+const server = net.createServer(
+    (socket)=>{
+        let date = new Date();
+
+        socket.end(
+            `${date.getFullYear()}-${padDigits(date.getMonth()+1)}-${padDigits(date.getDate())} ${padDigits(date.getHours())}:${padDigits(date.getMinutes())}\n`
+        );
+    }
+);
+server.listen(socket);
