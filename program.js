@@ -1,19 +1,12 @@
-const socket= process.argv[2];
+const socket = process.argv[2];
+const filePath = process.argv[3];
 
-const net = require('net');
+const fs = require('fs');
+const http = require('http');
 
-function padDigits(number)
-{
-    return number < 10 ? "0"+number : String(number); 
-}
-
-const server = net.createServer(
-    (socket)=>{
-        let date = new Date();
-
-        socket.end(
-            `${date.getFullYear()}-${padDigits(date.getMonth()+1)}-${padDigits(date.getDate())} ${padDigits(date.getHours())}:${padDigits(date.getMinutes())}\n`
-        );
-    }
+const server = http.createServer(
+   (req, res) => {
+    fs.createReadStream(filePath).pipe(res)
+   }
 );
 server.listen(socket);
