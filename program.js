@@ -1,12 +1,18 @@
 const socket = process.argv[2];
-const filePath = process.argv[3];
 
+const map = require('through2-map');
 const fs = require('fs');
 const http = require('http');
 
 const server = http.createServer(
    (req, res) => {
-    fs.createReadStream(filePath).pipe(res)
+    if(req.method == 'POST'){
+    req.pipe(
+        map( chunk => 
+            {return chunk.toString().toUpperCase();}
+        )
+    ).pipe(res);
    }
+}
 );
 server.listen(socket);
